@@ -85,14 +85,24 @@ class ManyToManyUpdater extends BaseManyToManyUpdater
                 foreach ($viaTableColumnNames as $viaTableColumnName) {
                     $junctionTableColumnNames[] = $viaTableColumnName;
                 }
-
-                $dbConnection->createCommand()
-                    ->batchInsert(
-                        $junctionTableName,
-                        $junctionTableColumnNames,
-                        $junctionRows
-                    )
-                    ->execute();
+                if (isset($junctionModelClass)) {
+                    $relatedModel = new $junctionModelClass();
+                    foreach ($junctionRows as $row) {
+                        foreach ($row as $pos => $value) {
+                            $attr = $junctionTableColumnNames[$pos];
+                            $relatedModel->$attr = $value;
+                        }
+                        $relatedModel->save();
+                    }
+                } else {
+                    $dbConnection->createCommand()
+                        ->batchInsert(
+                            $junctionTableName,
+                            $junctionTableColumnNames,
+                            $junctionRows
+                        )
+                        ->execute();
+                }
             }
             $transaction->commit();
         } catch (Exception $ex) {
