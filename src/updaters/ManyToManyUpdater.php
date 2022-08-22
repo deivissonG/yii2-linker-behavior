@@ -86,8 +86,8 @@ class ManyToManyUpdater extends BaseManyToManyUpdater
                     $junctionTableColumnNames[] = $viaTableColumnName;
                 }
                 if (isset($junctionModelClass)) {
-                    $relatedModel = new $junctionModelClass();
                     foreach ($junctionRows as $row) {
+                        $relatedModel = new $junctionModelClass();
                         foreach ($row as $pos => $value) {
                             $attr = $junctionTableColumnNames[$pos];
                             $relatedModel->$attr = $value;
